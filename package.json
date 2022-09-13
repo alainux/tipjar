@@ -11,7 +11,7 @@
     "hardhat": "hardhat --config hardhat.config.cjs",
     "hardhat:compile": "npm run hardhat compile",
     "hardhat:test": "npm run hardhat test",
-    "hardhat:deploy": "npm run hardhat deploy"
+    "hardhat:deploy": "npm run hardhat run scripts/deploy.js -- --network localhost"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "next",
