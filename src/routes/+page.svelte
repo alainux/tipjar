@@ -22,8 +22,6 @@
 			const [key, value] = field;
 			data[key] = value;
 		}
-
-		console.log(data);
 		const rwContract = new ethers.Contract(contractAddress, TipJarABI.abi, provider.getSigner());
 		const tx = await rwContract.sendTip(data.message, data.name, {
 			value: ethers.utils.parseEther(data.amount)
@@ -33,7 +31,7 @@
 
 	async function setupContract() {
 		if (isConnected) {
-			contract = new ethers.Contract(contractAddress, TipJarABI.abi, provider.getSigner());
+			contract = new ethers.Contract(contractAddress, TipJarABI.abi, provider);
 			contract.on('NewTip', async () => {
 				balance = await provider.getBalance(userAddress);
 				await getAllTips();
@@ -48,8 +46,10 @@
 			allTips = [
 				...tips.map((item) => {
 					return {
-						...item,
-						timestamp: new Date(item.timestamp * 1000),
+						address: item.sender,
+						timestamp: new Date(item.timestamp * 1000).toLocaleDateString(),
+						message: item.message,
+						name: item.name,
 						amount: ethers.utils.formatEther(item.amount.toString())
 					};
 				})
@@ -147,28 +147,28 @@
 				</th>
 			</tr>
 		</thead>
+		<tbody>
+			{#each allTips as item}
+				<tr>
+					<td class="border-b border-gray-700 p-4 pl- text-gray-500">
+						{item.sender}
+					</td>
+					<td class="border-b border-gray-700 p-4 pl- text-gray-500">
+						{item.name}
+					</td>
+					<td class="border-b border-gray-700 p-4 pl-8 text-gray-500">
+						{item.message}
+					</td>
+					<td class="border-b border-gray-700 p-4 pl-8 text-gray-500">
+						{item.timestamp}
+					</td>
+					<td class="border-b border-gray-700 p-4 pl-8 text-gray-500">
+						{item.amount}
+					</td>
+				</tr>
+			{/each}
+		</tbody>
 	</table>
-	<tbody>
-		{#each allTips as item}
-			<tr>
-				<td class="border-b border-gray-700 p-4 pl- text-gray-500">
-					{item.sender}
-				</td>
-				<td class="border-b border-gray-700 p-4 pl- text-gray-500">
-					{item.name}
-				</td>
-				<td class="border-b border-gray-700 p-4 pl-8 text-gray-500">
-					{item.message}
-				</td>
-				<td class="border-b border-gray-700 p-4 pl-8 text-gray-500">
-					{item.timestamp}
-				</td>
-				<td class="border-b border-gray-700 p-4 pl-8 text-gray-500">
-					{item.amount}
-				</td>
-			</tr>
-		{/each}
-	</tbody>
 {:else}
 	<button class="bg-blue-600 text-gray-50 shadow-md rounded-md px-3 py-8" on:click={connectWallet}>
 		Connect with wallet

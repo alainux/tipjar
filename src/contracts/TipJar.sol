@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.4;
 
 import 'hardhat/console.sol';
 
 contract TipJar {
 	uint256 public totalTips;
 
-	address payable owner;
+	address payable public owner;
 
 	struct Tip {
 		address sender;
